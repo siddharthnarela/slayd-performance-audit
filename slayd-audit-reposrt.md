@@ -82,7 +82,8 @@ This report provides a comprehensive performance and user experience audit of [S
 | Speed Index             | 12.2s                  | 3.5s                   | 4.2s                   | 0.9s                   |
 | Cumulative Layout Shift | 0.022                  | 0.036                  | 0.013                  | 0.007                  |
 
-✅ **Conclusion**: Gumroad provides a smooth, fast, and responsive user experience across devices. Slayd.in, while functional, needs targeted improvements in image handling, layout structure, and interactivity to reach similar performance levels.
+## ✅ **Conclusion**: 
+Gumroad provides a smooth, fast, and responsive user experience across devices. Slayd.in, while functional, needs targeted improvements in image handling, layout structure, and interactivity to reach similar performance levels.
 
 ---
 
