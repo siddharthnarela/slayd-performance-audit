@@ -2,27 +2,30 @@
 
 ## 📍 Overview
 
-This report provides a comprehensive audit of [Slayd.in](https://slayd.in), a digital marketplace, evaluating its technical performance, user experience, and areas for optimization. The audit includes benchmark comparisons against [Gumroad.com](https://gumroad.com), a well-optimized marketplace, to better contextualize Slayd.in’s current performance metrics.
+This report provides a comprehensive performance and user experience audit of [Slayd.in](https://slayd.in), a digital product marketplace. The goal is to assess technical performance, uncover UX friction points, and compare performance benchmarks against a leading marketplace — [Gumroad.com](https://gumroad.com). The audit outlines measurable metrics, visual diagnostics, and actionable recommendations.
 
 ---
 
 ## 🔎 Tools & Methodology
 
-- **Lighthouse (v12.6.1)** in Chrome DevTools for both Mobile and Desktop views
-- **PageSpeed Insights** for mobile-first performance review
-- **UX heuristics** and manual walkthrough for user flow evaluation
-- **Side-by-side comparison** with Gumroad.com using Lighthouse metrics
+- **Lighthouse** in Chrome DevTools (Mobile and Desktop modes)
+- **PageSpeed Insights** for mobile-first performance testing
+- **Manual UX Walkthrough** on mobile, tablet, and desktop
+- **Benchmark Comparison** with Gumroad.com
 
 ---
 
 ## 📱 UX Observations
 
-| Section          | Observations |
-|------------------|--------------|
-| **Homepage**     | The main banner takes too long to appear, especially on mobile. There is no loading feedback while data is being fetched. |
-| **Navigation**   | The mobile menu is slightly delayed in response and lacks fluidity. Desktop navigation is smoother. |
-| **Product Cards**| Images often pop into view late. There's a visible layout shift in some cases, which may affect perceived trust. |
-| **Checkout**     | The flow appears functional but lacks visual cues that make the user feel “safe” or guided, especially during network delays. |
+| Area               | Observation |
+|--------------------|-------------|
+| **Image Scaling**   | Showcase images are excessively large, dominating screen real estate and reducing content discoverability. This leads to a cluttered, overwhelming homepage UX. |
+| **Scroll Behavior** | A persistent horizontal scrollbar appears on certain screen widths and overlaps the main content, particularly on the homepage. This is distracting and suggests layout breakpoints are misconfigured. |
+| **Product Page Layout** | After clicking a product, the product details page opens in a narrow, scrollable column that resembles a mobile view. On desktop and tablet screens, this layout appears underutilized and awkward. |
+| **Responsiveness** | The UI appears to be designed mobile-first, but lacks fluid adaptation for larger screens — making it feel constrained and unoptimized on desktops. |
+| **Navigation**     | Mobile navigation is slightly delayed and lacks smooth transitions. Desktop menu works well. |
+| **Search Latency** | Search functionality suffers from noticeable delays in fetching results, impacting the overall flow and responsiveness of product discovery. |
+| **Checkout Flow**  | Functionally complete but lacks feedback states (e.g. loading spinners), which may create uncertainty during transactions. |
 
 ---
 
@@ -42,10 +45,11 @@ This report provides a comprehensive audit of [Slayd.in](https://slayd.in), a di
 | Speed Index             | 12.2s            | 4.2s             |
 | Cumulative Layout Shift | 0.022            | 0.013            |
 
-📌 **Key Pain Points**:
-- **LCP and FCP are significantly delayed**, especially on mobile.
-- **Desktop TBT (760ms)** suggests heavy JavaScript blocking interactivity.
-- **Speed Index** is very high (bad) — visible content takes too long to stabilize.
+📌 **Key Issues:**
+- Extremely high **LCP** on mobile due to large unoptimized images
+- JavaScript blocking delays interactivity on Desktop
+- High **Speed Index** indicates content takes time to fully render
+- Minimal CLS, but layout instability still observed from images
 
 ---
 
@@ -63,7 +67,7 @@ This report provides a comprehensive audit of [Slayd.in](https://slayd.in), a di
 | Speed Index             | 3.5s             | 0.9s             |
 | Cumulative Layout Shift | 0.036            | 0.007            |
 
-🟩 Gumroad exhibits excellent performance, particularly in Desktop view with a perfect score of 100 and nearly instantaneous paint metrics.
+🟩 Gumroad exhibits ideal optimization, especially on Desktop with a perfect 100 score and near-instant paint and interactivity metrics.
 
 ---
 
@@ -76,21 +80,24 @@ This report provides a comprehensive audit of [Slayd.in](https://slayd.in), a di
 | Largest Contentful Paint| 13.7s                  | 6.1s                   | 3.6s                   | 0.6s                   |
 | Total Blocking Time     | 40ms                   | 10ms                   | 760ms                  | 30ms                   |
 | Speed Index             | 12.2s                  | 3.5s                   | 4.2s                   | 0.9s                   |
-| CLS                     | 0.022                  | 0.036                  | 0.013                  | 0.007                  |
+| Cumulative Layout Shift | 0.022                  | 0.036                  | 0.013                  | 0.007                  |
 
-✅ **Conclusion**: Gumroad is highly optimized, and serves as a model for both frontend performance and code efficiency. Slayd.in requires urgent attention to image delivery, JavaScript execution, and layout stability.
+✅ **Conclusion**: Gumroad provides a smooth, fast, and responsive user experience across devices. Slayd.in, while functional, needs targeted improvements in image handling, layout structure, and interactivity to reach similar performance levels.
 
 ---
 
 ## 🛠️ Key Issues Identified
 
-| Area        | Problem Description | Impact |
-|-------------|---------------------|--------|
-| LCP Delay   | Hero images load too late (13.7s on mobile) | Slow perceived load time |
-| Image Size  | Images not compressed or lazy loaded | Bandwidth-heavy | 
-| JS Bundle   | Large JS bundle blocking main thread | Interactivity delay |
-| Cache Policy| No long-term caching for static assets | Re-fetching resources |
-| CLS         | Slight layout shift due to delayed image rendering | Poor user experience |
+| Area        | Description | Impact |
+|-------------|-------------|--------|
+| LCP Delay   | Hero images take over 13s to appear on mobile | Poor perceived speed |
+| Image Size  | Oversized images without compression or lazy loading | Slow load, high data usage |
+| Scrollbar Conflict | Horizontal scrollbar overlays images | Visual bugs on various screens |
+| Mobile-Centric Layout | Product pages are limited to mobile-width scrolling | Poor experience on tablets/desktops |
+| Search Latency | Slow search results | Hurts usability and engagement |
+| JS Bundle   | Heavy scripts blocking main thread | Lag in UI responsiveness |
+| No Caching  | Static assets reloaded on every visit | Poor repeat load times |
+| Feedback Gaps | No loading indicators in product or checkout flow | User uncertainty and friction |
 
 ---
 
@@ -98,37 +105,42 @@ This report provides a comprehensive audit of [Slayd.in](https://slayd.in), a di
 
 | Priority | Issue | Recommendation | Technical Notes |
 |----------|-------|----------------|-----------------|
-| 🔴 High  | Largest Contentful Paint too high | Preload above-the-fold images + convert to WebP | Use `<link rel="preload">`, Next.js `<Image priority>` |
-| 🔴 High  | JS Blocking on Desktop | Code-splitting + tree-shaking | Implement dynamic imports via React.lazy / Next.js |
-| 🟡 Medium| No caching policy | Enable `Cache-Control` headers for static assets | Configure server or CDN (e.g., Cloudflare) |
-| 🟡 Medium| CLS on image loads | Set width/height attributes or CSS aspect-ratio | Prevent layout shifts |
-| 🟢 Low   | SEO best practices already good | No change needed | Keep monitoring |
+| 🔴 High  | Large LCP | Compress and lazy-load hero/product images | Use WebP, `next/image`, `loading="lazy"` |
+| 🔴 High  | JS Blocking (Desktop) | Code-splitting and tree-shaking | Use React.lazy or dynamic import with Next.js |
+| 🔴 High  | Search Delay | Debounce input and optimize API | Add loading state + cache results |
+| 🟡 Medium| Scrollbar overlay | Fix layout overflow & breakpoints | `overflow-x: hidden`, layout refactor |
+| 🟡 Medium| Product page scaling | Make layout responsive on larger viewports | Use flex/grid with media queries |
+| 🟡 Medium| No caching | Add cache headers via CDN or server | Set Cache-Control headers |
+| 🟢 Low   | CLS issues | Define static dimensions for images | Use CSS `aspect-ratio` or fixed height |
+| 🟢 Low   | Missing UX feedback | Add loading spinners / skeletons | Use animated placeholders for perceived performance |
 
 ---
 
 ## 🔄 Suggested Optimizations
 
-- Implement **lazy loading** and **image compression (WebP/AVIF)**.
-- Use **Next.js `getStaticProps`** and `ISR` to cache product pages.
-- Optimize third-party scripts and audit for **unused dependencies**.
-- Add **skeleton UI or shimmer loaders** for perceived speed.
+- Use **Image CDNs** (e.g. ImageKit, Cloudflare) for optimized delivery
+- Add **skeleton loaders** to improve perceived speed
+- Audit and remove **unused CSS/JS**
+- Apply **responsive design best practices** across screen sizes
+- Cache API responses and static assets for faster repeated use
 
 ---
 
-## 📎 Attachments & Artifacts
+## 📎 Included Files
 
-- 📂 `/assets/`: Contains all screenshots from Lighthouse and PageSpeed
-- 📝 `comparison/gumroad-audit.md`: Includes raw notes from Gumroad benchmark
-- 📄 `slayd-audit-report.pdf`: This Markdown converted into styled PDF for final submission
+- `slayd-audit-report.md` – This report
+- `/assets/` – Lighthouse and PageSpeed screenshots
+- `gumroad-benchmark.md` – Audit metrics for Gumroad
+- `slayd-audit-report.pdf` – Printable PDF version (optional)
 
 ---
 
-## 📌 Final Thoughts
+## 🧠 Final Thoughts
 
-Slayd.in is functional and has the core structure of a modern marketplace but suffers from clear performance inefficiencies, particularly on mobile. Improving load performance and responsiveness will significantly enhance user satisfaction, SEO rankings, and overall retention — and help position Slayd.in as a fast, trustworthy platform in a competitive space.
+Slayd.in is a promising platform but currently underperforms in areas that directly impact user satisfaction and retention. Focused optimization on image delivery, layout responsiveness, and JavaScript execution will significantly enhance the user experience — especially for mobile-first users — and better align the product with modern web performance standards.
 
 ---
 
 **Prepared by:**  
 `Siddharth Narela`  
-`Performance Audit for Internship Assignment – July 2025`  
+Performance Audit for Internship Assignment – July 2025
